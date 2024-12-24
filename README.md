@@ -41,9 +41,9 @@ yarn install
 
 ```plaintext
 .
-├── pages/             # Next.js pages (routes)
+├── ContractAction/             # Next.js pages (routes)
 ├── public/            # Static assets
-├── components/        # Reusable React components
+       -src/app            # Reusable React components
 ├── styles/            # CSS and styling files
 ├── thirdweb.config.js # Thirdweb configuration
 ├── package.json       # Project dependencies and scripts
@@ -84,11 +84,12 @@ Access the application at `http://localhost:3000`.
 
 ## 🔗 Thirdweb Configuration
 
-To connect to your smart contracts, update the `thirdweb.config.js` file:
+To connect to your smart contracts, update the `BUSDContractAction.js and interactionnftmint.js` file:
 
 ```javascript
-export const contractAddress = "<your_contract_address>";
-export const network = "<your_network>"; // e.g., 'mainnet', 'rinkeby', etc.
+export const ContractaddressBUSD = "<your_contract_address>";
+export const NftContractaddress ="<your_contract_address>";
+export const network = "<your_network>"; // e.g., 'mainnet', 'Donatuz', etc.
 ```
 
 ---
