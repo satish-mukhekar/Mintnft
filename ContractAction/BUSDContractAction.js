@@ -10,12 +10,14 @@ const web3 = new Web3(new Web3.providers.HttpProvider(RPCUrl));
 // Approve NFT Contract
 
 export const ApproveBUSD = async (_amount, _NftContractaddress) => {
+  console.log("busdapprove1",_amount);
   try {
     if (window.ethereum) {
       const web3 = new Web3(window.ethereum);
-
+       console.log("busdapprove1",_amount);
       // Convert _amount to Wei (assuming _amount is in human-readable format)
       const amountInWei = web3.utils.toWei(_amount.toString(), "ether");
+      console.log("busdapprove2",amountInWei);
 
       // Validate NftContractAddress
       if (!web3.utils.isAddress(_NftContractaddress)) {

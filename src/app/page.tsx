@@ -1,7 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ConnectButton, useActiveAccount, useWalletInfo } from "thirdweb/react";
+import {
+  ConnectButton,
+  PayEmbed,
+  useActiveAccount,
+  useWalletInfo,
+} from "thirdweb/react";
 import { client } from "./client"; // Ensure this is your Thirdweb client instance
 import { ApproveBUSD } from "../../ContractAction/BUSDContractAction";
 import {
@@ -13,7 +18,6 @@ import {
 } from "../../ContractAction/Intreactionnftmint";
 import { Toaster, toast } from "react-hot-toast";
 import { sendImageToIPFS } from "./helper";
-import { log } from "console";
 
 export default function Home() {
   const [userDepositAmount, setUserDepositAmount] = useState("");
@@ -125,16 +129,16 @@ export default function Home() {
     }
   };
 
-  const handleFormSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await mintNFT(fileurl);
-      toast.success("NFT minted successfully!");
-    } catch (error) {
-      console.error("Error during NFT minting process:", error);
-      toast.error("An error occurred during the minting process.");
-    }
-  };
+  // const handleFormSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   try {
+  //     await mintNFT(fileurl);
+  //     toast.success("NFT minted successfully!");
+  //   } catch (error) {
+  //     console.error("Error during NFT minting process:", error);
+  //     toast.error("An error occurred during the minting process.");
+  //   }
+  // };
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -158,19 +162,33 @@ export default function Home() {
     }
   };
 
+  const handleMintNFT = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      if (!fileurl || !nftDetails.name) {
+        toast.error("Please upload an image and provide an NFT name.");
+        return;
+      }
+
+      await mintNFT(fileurl);
+      toast.success("NFT minted successfully!");
+    } catch (error) {
+      console.error("Error during NFT minting process:", error);
+      toast.error("An error occurred during the minting process.");
+    }
+  };
   return (
     <main className="bg-gray-900 text-white p-4 pb-10 min-h-screen flex flex-col items-center">
       <div className="py-10 max-w-3xl w-full">
         <Header />
-        <div className="my-10 flex justify-center">
-          <Toaster />
-          <ConnectButton
-            client={client}
-            autoConnect={true}
-            appMetadata={{ name: "Donatuz", url: "https://example.com" }}
-            onConnect={(walletData) => handleWalletConnected(walletData)}
-            // onConnect={handleWalletConnect}
-          />
+        <div className="my-10 flex items-center justify-center">
+        <ConnectButton
+          client={client}
+          autoConnect={true}
+          appMetadata={{ name: "Donatuz", url: "https://example.com" }}
+          onConnect={handleWalletConnected}
+        />
+        
         </div>
         <div className="mb-10">
           {balance !== null && <p className="mt-4">BUSD Balance: {balance}</p>}
@@ -183,14 +201,14 @@ export default function Home() {
         </button>
         <div className="mb-4">
           <label className="block text-sm mb-2" htmlFor="depositAmount">
-            Deposit Amount (in wei)
+            Deposit Amount
           </label>
           <input
             type="text"
             id="depositAmount"
             value={userDepositAmount}
             onChange={(e) => setUserDepositAmount(e.target.value)}
-            placeholder="Enter amount in wei"
+            placeholder="Enter amount"
             className="w-full px-4 py-2 bg-gray-700 text-white rounded focus:outline-none"
           />
         </div>
@@ -212,14 +230,14 @@ export default function Home() {
 
         <div className="mb-4 mt-6">
           <label className="block text-sm mb-2" htmlFor="withdrawAmount">
-            Withdraw Amount (in wei)
+            Withdraw Amount
           </label>
           <input
             type="text"
             id="withdrawAmount"
             value={userwithdrawAmount}
             onChange={(e) => setuserwithdrawAmount(e.target.value)}
-            placeholder="Enter amount in wei"
+            placeholder="Enter amount"
             className="w-full px-4 py-2 bg-gray-700 text-white rounded focus:outline-none"
           />
         </div>
@@ -230,7 +248,7 @@ export default function Home() {
           Withdraw
         </button>
         <form
-          onSubmit={handleFormSubmit}
+          onSubmit={handleMintNFT}
           className="bg-gray-800 p-6 rounded-lg shadow-md mt-6"
         >
           <div className="flex flex-row items-center gap-3 w-full">
@@ -252,11 +270,7 @@ export default function Home() {
               </div>
             </div>
             <div className="size-32 rounded-md bg-gray-400">
-              {
-                fileurl && (
-                  <img src={fileurl} alt="Uploaded Image" />
-                )
-              }
+              {fileurl && <img src={fileurl} alt="Uploaded Image" />}
             </div>
           </div>
           <div className="mb-4">
@@ -284,8 +298,30 @@ export default function Home() {
               required
             />
           </div>
+          {/* <PayEmbed
+          client={client}
+          payOptions={{
+            supportedTokens: {
+              "1": [
+                {
+                  address: "0x0094a2979cF30A0e6651A57038932426eC232fC9",
+                  name: "USD Coin",
+                  symbol: "USDC",
+                },
+              ],
+            },
+          }}
+          onSuccess={async () => {
+            toast.success("Payment successful! Minting your NFT...");
+            await handleMintNFT();
+          }}
+          onError={(error) => {
+            console.error("Payment error:", error);
+            toast.error("Payment failed. Please try again.");
+          }}
+        /> */}
           <button
-            type="submit"
+            type="submit" 
             className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
           >
             Mint NFT
